@@ -5,7 +5,7 @@
         <div class="login-id">
             登录帐号：<br>
             <div class="userid">
-                12345678910
+                {{username}}
             </div>
         </div>
         <div class="function">
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 export default {
     name: 'myMessage',
     components: {
@@ -54,6 +55,9 @@ export default {
                 this.functionName = '历史记录';
             }
         }
+    },
+    computed: {
+        ...mapState(['username'])
     }
 }
 </script>

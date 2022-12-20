@@ -4,10 +4,10 @@
         — — S H I L I U 秀 场 — —
     </div>
     <ul class="pictures">
-        <li v-for="p in pictureList" :key="p.id">
+        <li v-for="(p,index) in pictureList" :key="index">
             <div class="picture-place">
                 <img :src="p.path" alt="">
-                <div class="hover-page" @click="turnToShow(p.id)">
+                <div class="hover-page" @click="turnToShow(p.photoId,p.id)">
                     <div class="operate-box">
                         <div class="download">下载</div>
                         <div class="favor">收藏</div>
@@ -18,61 +18,85 @@
             <div class="picture-name">{{p.name}}</div>
         </li>
     </ul>
-    <Pop/>
-  </div>
+ </div>
 </template>
 
 <script>
-import Pop from '../common/addFavorPop.vue'
+import {getShowList} from '../../api'
 export default {
     name: 'showPlace',
     components: [
-        Pop
     ],
     data() {
         return {
-            pictureList:[
-                {
-                    id: '001',
-                    path: '',
-                    name:'DIAO2018GRLS'
-                },
-                {
-                    id: '002',
-                    path: '',
-                    name:'DIAO2018GRLS'
-                },
-                {
-                    id: '003',
-                    path: '',
-                    name:'DIAO2018GRLS'
-                },
-                {
-                    id: '004',
-                    path: '',
-                    name:'DIAO2018GRLS'
-                },
-                {
-                    id: '005',
-                    path: '',
-                    name:'DIAO2018GRLS'
-                },
-                {
-                    id: '006',
-                    path: '',
-                    name:'DIAO2018GRLS'
-                },
-            ]
+            pictureList:[],
+            onOff:false,
+            pageSize:6,
+            current:1,
+            pages:2
         }
     },
+    mounted(){
+        getShowList({current:1,pageSize:6}).then(res=>{
+            console.log(res);
+            this.pictureList = res.data.records;
+            this.pages = res.data.pages;
+        }),
+        window.addEventListener("scroll",this.throttleFun,true);
+    },
+    activated() {
+        
+    },
     methods: {
-        turnToShow(id) {
+        turnToShow(photoId,showId) {
+            window.removeEventListener("scroll",this.throttleFun,true);
             this.$router.push({
             name: 'showTime',
-                params: {
-                showId: id
+                query: {
+                photoId,
+                showId
                 }
             })
+        },
+        handleScroll() {
+            //标准浏览器中：定义一个形参event，但当事件触发的时候，并没有给event赋实际的值，则浏览器会把”事件“的对象赋给这个形参e，这时这个e是个系统级的对象：事件；
+            const scrollDistance = document.documentElement.scrollHeight - document.documentElement.scrollTop - document.documentElement.clientHeight;
+
+            // 滚动条距离底部小于等于0证明已经到底了，可以请求接口了
+            if (scrollDistance <= 5) {
+                //这个开关是为了避免请求数据中 再次被请求
+                if (this.onOff) return;
+                this.onOff = true;
+                //当前页数小于总页数 就请求
+                if (this.current < this.pages) {
+                this.current += 1;
+                let data = {current:this.current,pageSize:this.pageSize};
+                //请求数据
+                getShowList(data).then(res => {
+                    console.log(res);
+                    this.onOff = false;
+                    // this.current = res.data.current;
+                    this.pictureList = this.pictureList.concat(res.data.records);
+                    });
+                }
+            }
+        },
+        // 节流
+        throttle(fn,wait) {
+            let context, args;
+            let previous = 0;
+            return function() {
+                let now = +new Date();
+                context = this;
+                args = arguments; // 取throttle执行作用域的this
+                if (now - previous > wait) {
+                    fn.apply(context, args); // 用apply指向调用throttle的对象，相当于throttle.fn(args);
+                    previous = now;
+                }
+            };
+        },
+        throttleFun() {
+            this.throttle(this.handleScroll(), 1000);
         }
     }
 }
@@ -140,5 +164,6 @@ export default {
 .show-place .pictures li .picture-name {
     line-height: 50px;
     text-align: center;
+    font-size: 14px;
 }
 </style>

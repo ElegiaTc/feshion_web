@@ -18,7 +18,7 @@
         </div>
         <div class="main-picture">
           <div class="picture-show">
-            <img src="" alt="">
+            <img :src="picturePath" alt="">
             <div class="shadow1"></div>
             <div class="shadow2"></div>
             <div class="shadow3"></div>
@@ -46,69 +46,135 @@
       </div> -->
     </div>
     <div class="show-carousel">
-      <div class="last-page"></div>
+      <div class="last-page" @click="lastPage()"></div>
       <div class="hover-box">
-        <ul class="picture-container">
-          <li v-for="p in pictureList" :key="p.id"></li>
+        <ul class="picture-container" ref="showImg">
+          <li v-for="(p,index) in pictureList" :key="p.id">
+            <img :src="p.path" alt="">
+            <div class="hover-num"
+            @click="changePicture(index,p.path)">{{index+1}}</div>
+          </li>
         </ul>
       </div>
-      <div class="next-page"></div>
+      <div class="next-page" @click="nextPage()"></div>
     </div>
   </div>
 </template>
 
 <script>
+  import {getShowDetail} from '../api'
 export default {
   name: 'showTime',
   data() {
     return {
-      pictureList:[
-        {
-        id: '001',
-        path: ''
-        },
-        {
-        id: '002',
-        path: ''
-        },
-        {
-        id: '003',
-        path: ''
-        },
-        {
-        id: '004',
-        path: ''
-        },
-        {
-        id: '005',
-        path: ''
-        },
-        {
-        id: '006',
-        path: ''
-        },
-      ]
+      pictureList:[],
+      picturePath:'',
+      pictureHeight:135,
+      pageHeight:810,
+      nowHeight:0,
+      toPicture:0,
+      totalPicture:0,
+      pictureFlag:true,
+      pageFlag:true
     }
   },
   methods: {
-
+    changePicture(id,path) {
+      if(this.pictureFlag) {
+      this.pictureFlag = false;
+      this.toPicture = id;
+      this.picturePath = path;
+      console.log(id);
+      if(this.totalPicture - id < 6) {
+        this.toPicture = this.totalPicture-6
+      }
+        let step = 0;
+        let count = 1;
+        // this.$refs.showImg.style.transform = 'translateY('+'-'+ this.toHeight + 'px)';
+        if(this.toHeight - this.nowHeight > 405) {step=15;}
+        else if(this.toHeight - this.nowHeight > 270) {step=9;}
+        else if(this.toHeight - this.nowHeight > 135) {step=9;count=2}
+        else if(this.toHeight - this.nowHeight > 0) {step=3;}
+        else if(this.toHeight - this.nowHeight == 0) step=0;
+        else if(this.toHeight - this.nowHeight >= -135) {step=-3;}
+        else if(this.toHeight - this.nowHeight >= -270) {step=-9;count=2}
+        else if(this.toHeight - this.nowHeight >= -405) {step=-15;}
+        let swiper = setInterval(() => {
+          this.nowHeight+=step;
+          if(this.nowHeight == this.toHeight) {
+          clearInterval(swiper);
+          this.pictureFlag = true;
+          }
+          this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'px)';
+          
+        }, count);
+      }
+    },
+    lastPage() {
+      this.toPicture -= 6;
+      let swiper = setInterval(() => {
+          this.nowHeight-=15;
+          if(this.nowHeight == this.toHeight) {
+          clearInterval(swiper);
+          this.pageFlag = true;
+          }
+          this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'px)';
+          
+        }, 1);
+    },
+    nextPage() {
+      this.toPicture += 6;
+      if(this.toPicture + 6 >= this.totalPicture) {
+        this.toPicture = this.totalPicture - 6;
+      }
+      let swiper = setInterval(() => {
+          this.nowHeight+=15;
+          if(this.nowHeight == this.toHeight) {
+          clearInterval(swiper);
+          this.pageFlag = true;
+          }
+          this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'px)';
+          
+        }, 1);
+    },
+  },
+  computed: {
+    toHeight() {
+      if(this.toPicture>2) {
+        return (this.toPicture-2) * this.pictureHeight
+      } else return 0;
+    }
+  },
+  mounted() {
+    getShowDetail(this.$route.query.photoId,this.$route.query.showId)
+    .then(res => {
+      console.log(res);
+      this.pictureList = res.data.photoShowVos;
+      this.picturePath = this.pictureList[0].path;
+      this.totalPicture = res.data.photoShowVos.length;
+    })
+    .catch(err => {
+      console.log(err);
+    })
   }
 }
 </script>
 
 <style scoped>
+
 .show-time {
+  box-sizing: border-box;
   padding-top: 45px;
   display: flex;
   justify-content: space-between;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   margin: 0 auto;
-  background-color: #000;
+  background-color: #333;
 }
 .show-main {
   width: 896px;
-  height: 870px;
+  height: 850px;
 }
 .show-main .main-top {
   display: flex;
@@ -258,14 +324,15 @@ export default {
   justify-content: space-between;
   width: 105px;
   height: 875px;
-  margin-right: 20px;
+  margin-right: 30px;
+  margin-top: -10px;
   /* background-color: #fff; */
 }
 .show-carousel .last-page {
   width: 0;
   height: 0;
-  border-bottom: 15px solid #888;
-  border-top: 15px solid transparent;
+  border-bottom: 13px solid #888;
+  border-top: 13px solid transparent;
   border-left: 53px solid transparent;
   border-right: 53px solid transparent;
   cursor: pointer;
@@ -273,17 +340,17 @@ export default {
 .show-carousel .next-page {
   width: 0;
   height: 0;
-  border-top: 15px solid #888;
-  border-bottom: 15px solid transparent;
+  border-top: 13px solid #888;
+  border-bottom: 13px solid transparent;
   border-left: 53px solid transparent;
   border-right: 53px solid transparent;
   cursor: pointer;
 }
 .show-carousel .last-page:hover {
-  border-bottom: 15px solid #ccc;
+  border-bottom: 13px solid #ccc;
 }
 .show-carousel .next-page:hover{
-  border-top: 15px solid #ccc;
+  border-top: 13px solid #ccc;
 }
 .hover-box {
   width: 105px;
@@ -295,11 +362,36 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   width: 105px;
+  /* transform: translateY(-135px); */
 }
 .picture-container li {
+  position: relative;
   width: 105px;
   height: 130px;
   margin-bottom: 5px;
   background-color: #fff;
+}
+.picture-container li:hover .hover-num {
+  opacity: 1;
+}
+.picture-container li .hover-num {
+  opacity: 0;
+  user-select: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 105px;
+  height: 130px;
+  line-height: 128px;
+  text-align: center;
+  font-size: 60px;
+  color: #000;
+  background-color: rgba(0,0,0,.3);
+  transition: .3s;
+  cursor: pointer;
+}
+.picture-container li img {
+  width: 100%;
+  height: 100%;
 }
 </style>

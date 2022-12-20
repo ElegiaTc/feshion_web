@@ -1,16 +1,21 @@
 <template>
   <div>
-    <Head></Head>
-    <router-view></router-view>
+    <Header></Header>
+    <!-- <keep-alive>
+    <router-view v-if="$route.meta.keepAlive"/>
+    </keep-alive>
+    <router-view v-if="!$route.meta.keepAlive"/> -->
+    <router-view/>
   </div>
 </template>
 
 <script>
-import Head from './components/common/myHeader.vue'
+import Header from './components/common/myHeader.vue'
 export default {
   name: 'App',
   components: {
-    Head
+    Header,
+    
   }
 }
 </script>

@@ -1,86 +1,32 @@
 <template>
     <ul class="favor-list">
-        <li class="list-show" @click="clickToChoose('001')">
+        <li class="list-show" @click="clickToChoose('001')"
+        v-for="(f,index) in favorList" :key="index">
             <div class="picture-show" >
                 <img src="" alt="">
             </div>
-            <p>这是标题</p>
+            <p>{{f.name}}</p>
             <div class="operate-box">
                 <div class="download">下载</div>
                 <div class="delete">删除</div>
             </div>
         </li>
-        <li class="list-show" @click="clickToChoose('001')">
-            <div class="picture-show" >
-                <img src="" alt="">
-            </div>
-            <p>这是标题</p>
-            <div class="operate-box">
-                <div class="download">下载</div>
-                <div class="delete">删除</div>
-            </div>
-        </li>
-        <li class="list-show" @click="clickToChoose('001')">
-            <div class="picture-show" >
-                <img src="" alt="">
-            </div>
-            <p>这是标题</p>
-            <div class="operate-box">
-                <div class="download">下载</div>
-                <div class="delete">删除</div>
-            </div>
-        </li>
-        <li class="list-show" @click="clickToChoose('001')">
-            <div class="picture-show" >
-                <img src="" alt="">
-            </div>
-            <p>这是标题</p>
-            <div class="operate-box">
-                <div class="download">下载</div>
-                <div class="delete">删除</div>
-            </div>
-        </li>
-        <li class="list-show" @click="clickToChoose('001')">
-            <div class="picture-show" >
-                <img src="" alt="">
-            </div>
-            <p>这是标题</p>
-            <div class="operate-box">
-                <div class="download">下载</div>
-                <div class="delete">删除</div>
-            </div>
-        </li>
-        <li class="list-show" @click="clickToChoose('001')">
-            <div class="picture-show" >
-                <img src="" alt="">
-            </div>
-            <p>这是标题</p>
-            <div class="operate-box">
-                <div class="download">下载</div>
-                <div class="delete">删除</div>
-            </div>
-        </li>
-        <li class="list-show" @click="clickToChoose('001')">
-            <div class="picture-show" >
-                <img src="" alt="">
-            </div>
-            <p>这是标题</p>
-            <div class="operate-box">
-                <div class="download">下载</div>
-                <div class="delete">删除</div>
-            </div>
-        </li>
-        <li class="add-more"></li>
+        <li class="add-more" v-show="!isLoading"></li>
     </ul>
 </template>
 
 <script>
+import {showFolderByPage} from '../../api'
+import {mapState} from 'vuex' 
 export default {
     name: 'favorList',
     data() {
         return {
+            favorList:[],
+            photoList:[],
             checkedList:[],
-            isChecked: false
+            isChecked: false,
+            isLoading:true,
         }
     },
     methods: {
@@ -88,6 +34,21 @@ export default {
             this.checkedList.push(id);
             this.isChecked = !this.isChecked
         },
+    },
+    mounted() {
+        showFolderByPage({
+            current: 1,
+            userId: this.userId,
+            pageSize: 6,
+            id:-1
+        }).then(res => {
+            console.log(res);
+            this.isLoading = false
+            this.favorList = res.data.folders.records
+        })
+    },
+    computed: {
+        ...mapState(['userId'])
     }
 }
 </script>
@@ -98,6 +59,7 @@ export default {
     justify-content: flex-start;
     flex-wrap: wrap;
     width: 926px;
+    height: 490px;
 }
 .list-show,
 .add-more{

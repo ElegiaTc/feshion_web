@@ -2,9 +2,15 @@
   <div class="carousel-box">
     <div class="swiper-container">
       <div class="swiper-wrapper">
-        <div class="swiper-slide">Slide 1</div>
-        <div class="swiper-slide">Slide 2</div>
-        <div class="swiper-slide">Slide 3</div>
+        <div class="swiper-slide">
+          <img src="../../assets/img1.webp" alt="">
+        </div>
+        <div class="swiper-slide">
+          <img src="../../assets/img2.webp" alt="">
+        </div>
+        <div class="swiper-slide">
+          <img src="../../assets/img3.webp" alt="">
+        </div>
       </div>
       <!-- 如果需要分页器 -->
       <!-- <div class="swiper-pagination"></div> -->
@@ -35,8 +41,6 @@ import 'swiper/css/swiper.min.css'
 
   export default {
     name: 'mynCarousel',
-    components: {
-    },
     data() {
       return {
         searchKeyWord: ''
@@ -73,6 +77,7 @@ import 'swiper/css/swiper.min.css'
     methods: {
       searchPage() {
         if (this.searchKeyWord != '') {
+          window.removeEventListener("scroll",this.throttleFun,true);
           this.$router.push({
             name: 'mySearch',
             params: {
@@ -95,7 +100,11 @@ import 'swiper/css/swiper.min.css'
 }
 .swiper-container {
     width: 1026px;
-    height: 400px;
+    height: 450px;
+}
+.swiper-slide img {
+  width: 100%;
+  height: 100%;
 }
 .swiper-button-prev {
   margin-top: 20px;

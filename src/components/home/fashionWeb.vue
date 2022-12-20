@@ -48,80 +48,80 @@ export default {
             pictureList:[
                 {
                     id: '001',
-                    path: '/a'
+                    path: require('../../assets/img4.jpg')
                 },
                 {
                     id: '002',
-                    path: '/b'
+                    path: require('../../assets/img5.jpg')
                 },
                 {
                     id: '003',
-                    path: '/c'
+                    path: require('../../assets/img6.jpg')
                 }
             ],
             news1List:[
                 {
                     id: '001',
-                    path: '/a',
+                    path: '',
                     title:'爱迪达斯宣布破产！！！'
                 },
                 {
                     id: '002',
-                    path: '/b',
+                    path: '',
                     title: '大师傅大师傅似的给VS的格式发给是否关闭b..'
                 },
                 {
                     id: '003',
-                    path: '/c',
+                    path: '',
                     title: '大师傅大师傅似的给VS的格式发给是否关闭b..'
                 },
                 {
                     id:'004',
-                    path:'/d',
+                    path:'',
                     title: '大师傅大师傅似的给VS的格式发给是否关闭b..'
                 }
             ],
             news2List:[
                 {
                     id: '001',
-                    path: '/a',
+                    path: '',
                     title:'著名时尚博主ailing出演三国义!'
                 },
                 {
                     id: '002',
-                    path: '/b',
+                    path: '',
                     title: '大师傅大师傅似的给VS的格式发给是否关闭b..'
                 },
                 {
                     id: '003',
-                    path: '/c',
+                    path: '',
                     title: '大师傅大师傅似的给VS的格式发给是否关闭b..'
                 },
                 {
                     id:'004',
-                    path:'/d',
+                    path:'',
                     title: '大师傅大师傅似的给VS的格式发给是否关闭b..'
                 }
             ],
             news3List:[
                 {
                     id: '001',
-                    path: '/a',
+                    path: '',
                     title:'爱迪达斯宣布破产！！！'
                 },
                 {
                     id: '002',
-                    path: '/b',
+                    path: '',
                     title: 'NIKE彻底退出历史舞台,将成为一代人的记忆...'
                 },
                 {
                     id: '003',
-                    path: '/c',
+                    path: '',
                     title: '大师傅大师傅似的给VS的格式发给是否关闭b..'
                 },
                 {
                     id:'004',
-                    path:'/d',
+                    path:'',
                     title: '大师傅大师傅似的给VS的格式发给是否关闭b..'
                 }
             ]
@@ -190,6 +190,11 @@ export default {
     width: 280px;
     height: 145px;
     background-color: #aaa;
+    border-radius: 10px;
+}
+.picture-list li img {
+    width: 100%;
+    height: 100%;
     border-radius: 10px;
 }
 .news-part {

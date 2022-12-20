@@ -39,13 +39,16 @@ export default new VueRouter({
             component: Search
         },
         {
-            path: '/show/:showId',
+            path: '/show',
             name: 'showTime',
             component: Show
         },
         {
             path: '/home',
-            component: Home
+            component: Home,
+            meta: {
+                keepAlive:true
+            }
         },
         {
             path: '/aiLab',

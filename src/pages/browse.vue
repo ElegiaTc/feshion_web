@@ -8,35 +8,43 @@
     <ul class="record-list">
       <li class="records" v-for="r in recordList" :key='r.id'>
         <div class="pic">
-          <img :src="r.src" alt="">
+          <img :src="r.photoPath" alt="">
         </div>
         <div class="details">
-          <div class="pic-name">名称: 123</div>
+          <div class="pic-name">名称: {{r.brandName}}</div>
           <div class="pic-sort">分类: 123</div>
           <div class="pic-size">大小: 123</div>
         </div>
         <div class="see-more">查看详情</div>
       </li>
     </ul>
+    <div class="is-empty" v-show="isEmpty">浏览记录为空！</div>
   </div>
 </template>
 
 <script>
+import {getBrowsingRecord} from '../api'
 export default {
     name: 'myBrowse',
     data() {
       return {
-        recordList: [
-          {
-            id:'001',
-            src:'111'
-          },
-          {
-            id:'002',
-            src:'222'
-          }
-        ]
+        recordList: [],
+        current:0,
+        pageSize:4,
+        isEmpty: false
       }
+    },
+    mounted() {
+      getBrowsingRecord({current:0,pageSize:4})
+      .then(res => {
+        console.log(res);
+        if(res.data != null) {
+          this.isEmpty = false
+          this.recordList = res.data.records
+        } else {
+          this.isEmpty = true
+        }
+      })
     }
 }
 </script>
@@ -63,6 +71,10 @@ export default {
   margin-left: 10px;
   border: 1px solid #000;
 }
+.record-list li .pic img {
+  width: 100%;
+  height: 100%;
+}
 .record-list li .details {
   display: flex;
   flex-direction: column;
@@ -86,5 +98,15 @@ export default {
 .record-list li .see-more:hover {
   background-color: rgb(121,121,121);
   color: #fff;
+}
+.is-empty {
+  width: 746px;
+  height: 50px;
+  line-height: 48px;
+  border: 1px solid #000;
+  margin: 50px auto;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 26px;
 }
 </style>

@@ -7,8 +7,10 @@
                 v-model="showDelate" :value="true"> 全选
             </div>
             <div class="downloads" style="cursor:pointer">批量下载</div>
-            <div class="new-more" style="cursor:pointer">新建收藏夹</div>
-            <div v-show="showDelate" class="delate" style="cursor:pointer">删除</div>
+            <div class="new-more" style="cursor:pointer"
+            @click="addFavor">新建收藏夹</div>
+            <div v-show="showDelate" class="delate" 
+            style="cursor:pointer" @click="deleteFavor">删除</div>
             <span v-show="!showDelate" class="delate-push"></span>
         </div>
         <div class="search-box">
@@ -18,14 +20,33 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import {addFolder,deleteFolder} from '../../api'
 export default {
     name: 'favorOperate',
-        data() {
+    data() {
         return {
             nav: '1级',
             keyWord: '',
-            showDelate:false
+            showDelate:false,
+            pathid:1
         }
+    },
+    methods: {
+        addFavor() {
+            addFolder({name:'我的文件夹2号',userId:this.userId,parentId:-1})
+            .then(res => {
+                console.log(res);
+            })
+        },
+        deleteFavor() {
+            deleteFolder(this.pathid).then(res => {
+                console.log(res);
+            })
+        }
+    },
+    computed: {
+        ...mapState(['userId'])
     }
 }
 </script>

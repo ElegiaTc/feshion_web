@@ -1,19 +1,41 @@
 <template>
   <div class="modify-password">
     <form action="" id="form2">
-      旧密码: &nbsp;&nbsp;<input type="text" class="oldpass" placeholder="请输入旧密码">
+      旧密码: &nbsp;&nbsp;<input type="text" class="oldpass" placeholder="请输入旧密码" v-model="oldPassword">
       <br><br>
-      新密码: &nbsp;&nbsp;<input type="text" class="newpass" placeholder="请输入新密码">
+      新密码: &nbsp;&nbsp;<input type="text" class="newpass" placeholder="请输入新密码" v-model="newPassword">
       <br><br>
-      重复密码: &nbsp;&nbsp;<input type="text" class="repeatpass" placeholder="请重复输入新密码">
+      重复密码: &nbsp;&nbsp;<input type="text" class="repeatpass" placeholder="请重复输入新密码" v-model="repeatPassword">
     </form>
-    <div class="savepass">保存密码</div>
+    <div class="savepass" @click="modifyPassword">保存密码</div>
   </div>
 </template>
 
 <script>
+import {changePassword} from '../api'
 export default {
-
+  data() {
+    return {
+      oldPassword:'',
+      newPassword:'',
+      repeatPassword:''
+    }
+  },
+  methods: {
+    modifyPassword() {
+      if(this.newPassword == this.repeatPassword) {
+        changePassword({oldPassword:this.oldPassword,newPassword:this.newPassword})
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+      } else {
+        console.log('两次密码不一致！');
+      }
+    }
+  }
 }
 </script>
 

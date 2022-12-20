@@ -11,9 +11,9 @@
                 <b>I</b>
                 <b>U</b>
             </span>
-            <router-link to="/favority">收 藏 夹</router-link>
+            <div class="favority" @click="clickToFavor">收 藏 夹</div>
             <!-- <router-link to="/Message" style='margin-right:40px'>石 榴 君</router-link> -->
-            <div class="user-lab" @click="clickToShow" v-show="isLogin">石 榴 君</div>
+            <div class="user-lab" @click="clickToShow" v-show="isLogin">{{nickname||username}}</div>
             <div class="to-login" @click="clickToLogin" v-show="!isLogin">登 录</div>
             <div class="user-nav" v-show="userShow">
                 <div class="my-message" @click="clickToMessage">我的信息</div>
@@ -33,22 +33,30 @@ export default {
         }
     },
     computed: {
-        ...mapState(['isLogin'])
+        ...mapState(['isLogin','nickname','username'])
     },
     methods:{
         clickToShow() {
             this.userShow = !this.userShow;
         },
+        clickToFavor() {
+            window.removeEventListener("scroll",this.throttleFun,true);
+            this.$router.push('/favority');
+        },
         clickToMessage() {
+            window.removeEventListener("scroll",this.throttleFun,true);
             this.$router.push('/message');
             this.userShow = !this.userShow;
         },
         clickToLogin() {
-            this.$router.push('/login')
+            window.removeEventListener("scroll",this.throttleFun,true);
+            this.$router.push('/login');
         },
         clickToLogout() {
+            sessionStorage.removeItem('token')
             this.$store.commit('CHANGE_LOGIN')
             this.userShow = !this.userShow;
+            this.$router.push('/home');
         }
     }
 }
@@ -100,6 +108,11 @@ header {
 .header a:hover {
     color: rgb(153,153,153);
 }
+.header .favority {
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+}
 .header .user-lab,
 .header .to-login {
     margin-right:40px;
@@ -107,6 +120,7 @@ header {
     color: #fff;
     cursor: pointer;
 }
+.header .favority:hover,
 .header .user-lab:hover,
 .header .to-login:hover {
     color: rgb(153,153,153);

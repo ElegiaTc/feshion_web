@@ -6,8 +6,8 @@
         改&nbsp;&nbsp;变&nbsp;&nbsp;
         世&nbsp;&nbsp;界</div>
         <form action="" method="post">
-          <input type="text" class="username" placeholder="点击输入用户名">
-          <input type="text" class="password" placeholder="点击输入密码">
+          <input type="text" class="username" placeholder="点击输入用户名" v-model="username">
+          <input type="text" class="password" placeholder="点击输入密码" v-model="password">
           <div class="btn" @click="toConfirm">{{btnMsg}}</div>
         </form>
         <div class="bottom">
@@ -23,7 +23,8 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
+import {mapState} from 'vuex'
+import {register,login,showUserDetail} from '../api'
 export default {
     name: 'loginPage',
     data() {
@@ -32,7 +33,9 @@ export default {
           btnMsg: '登 录',
           isLoginPage: true,
           tipsMsg:'无 账 号？点 击 注 册',
-          isChecked:''
+          isChecked:'',
+          username:'',
+          password:'',
         }
     },
     methods: {
@@ -41,8 +44,22 @@ export default {
           if(this.isChecked) {    //记住密码
             console.log(1);
           }
-        this.$router.push('/home')
-        this.$store.commit('CHANGE_LOGIN')
+        login(this.username,this.password)
+        .then(res => {
+          if(res.status == 200) {
+            console.log(res);
+            sessionStorage.setItem('token',res.data);
+            this.$store.commit('CHANGE_LOGIN');
+            showUserDetail().then(res => {
+              console.log(res);
+              this.$store.commit('CHANGE_USERMESSAGE',
+              [res.data.nickname,res.data.username,res.data.id])
+              this.$router.push('/home');
+            })
+          } else {
+            console.log(res);
+          }
+        })
         } else {                  //走注册流程
 
         }
@@ -75,8 +92,9 @@ export default {
     left: 50%;
     transform: translateX(-50%);
     width: 1026px;
-    height: 500px;
-    background-color: #333;
+    height: 513px;
+    background-image: url('.././assets/img7.jpg');
+    background-size: contain;
     z-index: -1;
 }
 .login-bg .main-page {
@@ -88,7 +106,7 @@ export default {
     padding: 20px 30px;
     box-sizing: border-box;
     border-radius: 30px;
-    background-color: #aaa;
+    background-color: rgba(200,200,200,.7);
 }
 .login-bg h4 {
   margin-left: 5px;
