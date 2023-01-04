@@ -7,7 +7,8 @@
         世&nbsp;&nbsp;界</div>
         <form action="" method="post">
           <input type="text" class="username" placeholder="点击输入用户名" v-model="username">
-          <input type="text" class="password" placeholder="点击输入密码" v-model="password">
+          <input type="password" class="password"
+          @keyup.enter='toConfirm' placeholder="点击输入密码" v-model="password">
           <div class="btn" @click="toConfirm">{{btnMsg}}</div>
         </form>
         <div class="bottom">
@@ -44,25 +45,36 @@ export default {
           if(this.isChecked) {    //记住密码
             console.log(1);
           }
-        login(this.username,this.password)
-        .then(res => {
-          if(res.status == 200) {
-            console.log(res);
-            sessionStorage.setItem('token',res.data);
-            this.$store.commit('CHANGE_LOGIN');
-            showUserDetail().then(res => {
+          login(this.username,this.password)
+          .then(res => {
+            if(res.status == 200) {
               console.log(res);
-              this.$store.commit('CHANGE_USERMESSAGE',
-              [res.data.nickname,res.data.username,res.data.id])
-              this.$router.push('/home');
-            })
-          } else {
-            console.log(res);
-          }
-        })
+              sessionStorage.setItem('token',res.data);
+              this.$store.commit('CHANGE_LOGIN');
+              showUserDetail().then(res => {
+                console.log(res);
+                this.$store.commit('CHANGE_USERMESSAGE',
+                [res.data.nickname,res.data.username,res.data.id])
+                this.$router.push('/home');
+              })
+            } else {
+                console.log(res);
+              }
+          })
         } else {                  //走注册流程
-
-        }
+            register({username:this.username,password:this.password})
+            .then(res => {
+              if(res.status == 200) {
+                console.log(res);
+                this.loginMsg = '登 录'
+                this.btnMsg = '登 录'
+                this.isLoginPage = true
+                this.tipsMsg = '无 账 号？点 击 注 册'
+              } else {
+                console.log(res);
+              }
+            })
+          }
       },
       changeModule() {
         if (this.isLoginPage) {

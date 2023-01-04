@@ -24,15 +24,26 @@ export default {
         lastPage() {
             if (this.nowPage === 1) return
             this.nowPage -- ;
+            this.$bus.$emit('turnLastPage',-1);
         },
         nextPage() {
             if (this.nowPage === this.totalPage) return
             this.nowPage ++ ;
+            this.$bus.$emit('turnNextPage',1);
         },
         turnPage() {
             if (this.turnToPage < 1 || this.turnToPage > this.totalPage) return
             this.nowPage = this.turnToPage
+            this.$bus.$emit('turnAnyPage',this.turnToPage)
         }
+    },
+    created() {
+        this.$bus.$on('totalFavorPage',(pages) => {
+            this.totalPage = pages
+        });
+        this.$bus.$on('updateTotalPage',(pages) => {
+            this.totalPage = pages
+        });
     }
 }
 </script>

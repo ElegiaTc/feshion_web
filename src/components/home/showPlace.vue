@@ -9,9 +9,9 @@
                 <img :src="p.path" alt="">
                 <div class="hover-page" @click="turnToShow(p.photoId,p.id)">
                     <div class="operate-box">
-                        <div class="download">下载</div>
-                        <div class="favor">收藏</div>
-                        <div class="search">搜索</div>
+                        <div class="download"><i class="el-icon-download"></i></div>
+                        <div class="favor" @click.stop="addFavor(p.path,p.name)"><i class="el-icon-folder"></i></div>
+                        <div class="search"><i class="el-icon-search"></i></div>
                     </div>
                 </div>
             </div>
@@ -33,7 +33,9 @@ export default {
             onOff:false,
             pageSize:6,
             current:1,
-            pages:2
+            pages:2,
+            nowPhotoPath:'',
+            nowPhotoName:''
         }
     },
     mounted(){
@@ -43,6 +45,9 @@ export default {
             this.pages = res.data.pages;
         }),
         window.addEventListener("scroll",this.throttleFun,true);
+    },
+    beforeDestroy() {
+        window.removeEventListener("scroll",this.throttleFun,true);
     },
     activated() {
         
@@ -57,6 +62,11 @@ export default {
                 showId
                 }
             })
+        },
+        addFavor(path,name) {
+            this.nowPhotoPath = path;
+            this.nowPhotoName = name;
+            console.log(path,name);
         },
         handleScroll() {
             //标准浏览器中：定义一个形参event，但当事件触发的时候，并没有给event赋实际的值，则浏览器会把”事件“的对象赋给这个形参e，这时这个e是个系统级的对象：事件；
@@ -144,12 +154,12 @@ export default {
     left: 0;
     width: 290px;
     height: 400px;
-    background-color: #888;
+    background-color: rgba(128,128,128,0.5);
     opacity: 0;
     transition: 0.5s all;
 }
 .pictures li .picture-place:hover .hover-page{
-    opacity: 0.6;
+    opacity: 1;
 }
 .hover-page .operate-box {
     display: flex;

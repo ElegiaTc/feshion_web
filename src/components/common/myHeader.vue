@@ -11,9 +11,9 @@
                 <b>I</b>
                 <b>U</b>
             </span>
-            <div class="favority" @click="clickToFavor">收 藏 夹</div>
+            <div class="favority" @click="clickToFavor"><i class="el-icon-folder"></i>收 藏 夹</div>
             <!-- <router-link to="/Message" style='margin-right:40px'>石 榴 君</router-link> -->
-            <div class="user-lab" @click="clickToShow" v-show="isLogin">{{nickname||username}}</div>
+            <div class="user-lab" @click="clickToShow" v-show="isLogin"><i class="el-icon-user"></i>{{nickname||username}}</div>
             <div class="to-login" @click="clickToLogin" v-show="!isLogin">登 录</div>
             <div class="user-nav" v-show="userShow">
                 <div class="my-message" @click="clickToMessage">我的信息</div>
@@ -40,11 +40,13 @@ export default {
             this.userShow = !this.userShow;
         },
         clickToFavor() {
-            window.removeEventListener("scroll",this.throttleFun,true);
+            if(this.isLogin) {
+            // window.removeEventListener("scroll",this.throttleFun,true);
             this.$router.push('/favority');
+            }
         },
         clickToMessage() {
-            window.removeEventListener("scroll",this.throttleFun,true);
+            // window.removeEventListener("scroll",this.throttleFun,true);
             this.$router.push('/message');
             this.userShow = !this.userShow;
         },

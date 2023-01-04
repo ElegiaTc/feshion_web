@@ -2,8 +2,9 @@
   <div class="search">
     <div class="search-lab">
         <input type="text" v-model="keyWord"
-        placeholder="输入查找内容">
-        <div class="search-button">搜索</div>
+        placeholder="输入查找内容"
+        @keyup.enter="searchPicture">
+        <div class="search-button" @click="searchPicture">搜索</div>
     </div>
     <div class="show-operate">
         <ul>
@@ -13,37 +14,9 @@
         <div class="operate-more">批量操作</div>
         <div class="result-count">共 {{resultCount}} 个结果</div>
     </div>
-    <ul class="search-result">
-        <li>
-            <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/WJHIRK/89/8e/ee/898eeec9a0ff4ed993a00ac41d13ddb5/images/首页（登录）/u103_state0.jpg?token=5f385efa5b657154722b9af127716143935fa492d3515547ee61f8cee658235c" alt="">
-            <div class="hover-page"></div>
-        </li>
-         <li>
-            <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/WJHIRK/89/8e/ee/898eeec9a0ff4ed993a00ac41d13ddb5/images/首页（登录）/u103_state0.jpg?token=5f385efa5b657154722b9af127716143935fa492d3515547ee61f8cee658235c" alt="">
-            <div class="hover-page"></div>
-        </li>
-         <li>
-            <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/WJHIRK/89/8e/ee/898eeec9a0ff4ed993a00ac41d13ddb5/images/首页（登录）/u103_state0.jpg?token=5f385efa5b657154722b9af127716143935fa492d3515547ee61f8cee658235c" alt="">
-            <div class="hover-page"></div>
-        </li>
-         <li>
-            <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/WJHIRK/89/8e/ee/898eeec9a0ff4ed993a00ac41d13ddb5/images/首页（登录）/u103_state0.jpg?token=5f385efa5b657154722b9af127716143935fa492d3515547ee61f8cee658235c" alt="">
-            <div class="hover-page"></div>
-        </li>
-         <li>
-            <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/WJHIRK/89/8e/ee/898eeec9a0ff4ed993a00ac41d13ddb5/images/首页（登录）/u103_state0.jpg?token=5f385efa5b657154722b9af127716143935fa492d3515547ee61f8cee658235c" alt="">
-            <div class="hover-page"></div>
-        </li>
-         <li>
-            <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/WJHIRK/89/8e/ee/898eeec9a0ff4ed993a00ac41d13ddb5/images/首页（登录）/u103_state0.jpg?token=5f385efa5b657154722b9af127716143935fa492d3515547ee61f8cee658235c" alt="">
-            <div class="hover-page"></div>
-        </li>
-         <li>
-            <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/WJHIRK/89/8e/ee/898eeec9a0ff4ed993a00ac41d13ddb5/images/首页（登录）/u103_state0.jpg?token=5f385efa5b657154722b9af127716143935fa492d3515547ee61f8cee658235c" alt="">
-            <div class="hover-page"></div>
-        </li>
-         <li>
-            <img src="https://d1icd6shlvmxi6.cloudfront.net/gsc/WJHIRK/89/8e/ee/898eeec9a0ff4ed993a00ac41d13ddb5/images/首页（登录）/u103_state0.jpg?token=5f385efa5b657154722b9af127716143935fa492d3515547ee61f8cee658235c" alt="">
+    <ul class="search-result" v-loading="loading">
+        <li v-for="(s,index) in searchList" :key="index">
+            <img :src="s.path" alt="">
             <div class="hover-page"></div>
         </li>
     </ul>
@@ -51,6 +24,7 @@
 </template>
 
 <script>
+import {queryShowList} from '../api'
 export default {
     name: 'mySearch',
     data() {
@@ -66,17 +40,98 @@ export default {
                     name: '最潮'
                 }
             ],
+            searchList:[],
             keyWord: '',
             changeStyle: '0',
-            resultCount: 123456
+            resultCount: 123456,
+            loading:true,
+            current:1,
+            pageSize:16,
+            onOff:false,
+            pages:2,
+            flag:true,     //为真时才能搜索 防抖
         }
     },
-    created: function(){
+    created() {
         this.keyWord = this.$route.params.searchKeyWord
+    },
+    mounted() {
+        queryShowList({
+            keyword:this.keyWord,
+            current:this.current,
+            pageSize:this.pageSize})
+        .then(res => {
+            console.log(res);
+            this.loading = false;
+            this.resultCount = res.data.total;
+            this.searchList = res.data.records;
+            this.pages = res.data.pages;
+        })
+        window.addEventListener("scroll",this.throttleFun,true);
     },
     methods:{
         changeFunction(index) {
             this.changeStyle = index;
+        },
+        searchPicture() {
+            if(this.keyWord != '' && this.flag && !this.loading) {
+                this.current = 1;
+                this.loading = true;
+                this.flag = false;
+                setTimeout(() => {
+                    this.flag = true;
+                }, 1200);
+                queryShowList({
+                    keyword:this.keyWord,
+                    current:this.current,
+                    pageSize:this.pageSize
+                }).then(res => {
+                    this.loading = false;
+                    this.resultCount = res.data.total;
+                    this.searchList = res.data.records;
+                    this.pages = res.data.pages;
+                })
+            }
+        },
+        handleScroll() {
+            //标准浏览器中：定义一个形参event，但当事件触发的时候，并没有给event赋实际的值，则浏览器会把”事件“的对象赋给这个形参e，这时这个e是个系统级的对象：事件；
+            const scrollDistance = document.documentElement.scrollHeight - document.documentElement.scrollTop - document.documentElement.clientHeight;
+
+            // 滚动条距离底部小于等于0证明已经到底了，可以请求接口了
+            if (scrollDistance <= 50) {
+                //这个开关是为了避免请求数据中 再次被请求
+                if (this.onOff) return;
+                this.onOff = true;
+                //当前页数小于总页数 就请求
+                if (this.current < this.pages) {
+                this.current += 1;
+                let data = {current:this.current,pageSize:this.pageSize};
+                //请求数据
+                queryShowList(data).then(res => {
+                    console.log(res);
+                    this.onOff = false;
+                    // this.current = res.data.current;
+                    this.searchList = this.searchList.concat(res.data.records);
+                    });
+                }
+            }
+        },
+        // 节流
+        throttle(fn,wait) {
+            let context, args;
+            let previous = 0;
+            return function() {
+                let now = +new Date();
+                context = this;
+                args = arguments; // 取throttle执行作用域的this
+                if (now - previous > wait) {
+                    fn.apply(context, args); // 用apply指向调用throttle的对象，相当于throttle.fn(args);
+                    previous = now;
+                }
+            };
+        },
+        throttleFun() {
+            this.throttle(this.handleScroll(), 2000);
         }
     }
 }
@@ -154,7 +209,7 @@ export default {
     flex: 0 0 25%;
     width: 205px;
     height: 310px;
-    background-color: pink;
+    /* background-color: pink; */
     cursor: pointer;
 }
 .search-result img {
