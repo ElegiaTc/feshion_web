@@ -69,8 +69,8 @@ export default {
     return {
       pictureList:[],
       picturePath:'',
-      pictureHeight:135,
-      pageHeight:810,
+      pictureHeight:15,
+      pageHeight:89,
       nowHeight:0,
       toPicture:0,
       totalPicture:0,
@@ -88,24 +88,24 @@ export default {
       if(this.totalPicture - id < 6) {
         this.toPicture = this.totalPicture-6
       }
-        let step = 0;
-        let count = 1;
+        let step = 1;
+        let count = 8;
         // this.$refs.showImg.style.transform = 'translateY('+'-'+ this.toHeight + 'px)';
-        if(this.toHeight - this.nowHeight > 405) {step=15;}
-        else if(this.toHeight - this.nowHeight > 270) {step=9;}
-        else if(this.toHeight - this.nowHeight > 135) {step=9;count=2}
-        else if(this.toHeight - this.nowHeight > 0) {step=3;}
+        if(this.toHeight - this.nowHeight > 45) {count=1;}
+        else if(this.toHeight - this.nowHeight > 30) {count=2}
+        else if(this.toHeight - this.nowHeight > 15) {count=4}
+        else if(this.toHeight - this.nowHeight > 0) {}
         else if(this.toHeight - this.nowHeight == 0) step=0;
-        else if(this.toHeight - this.nowHeight >= -135) {step=-3;}
-        else if(this.toHeight - this.nowHeight >= -270) {step=-9;count=2}
-        else if(this.toHeight - this.nowHeight >= -405) {step=-15;}
+        else if(this.toHeight - this.nowHeight >= -15) {count=4;step=-1}
+        else if(this.toHeight - this.nowHeight >= -30) {count=2;step=-1}
+        else if(this.toHeight - this.nowHeight >= -45) {count=1;step=-1}
         let swiper = setInterval(() => {
           this.nowHeight+=step;
           if(this.nowHeight == this.toHeight) {
           clearInterval(swiper);
           this.pictureFlag = true;
           }
-          this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'px)';
+          this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'vh)';
           
         }, count);
       }
@@ -113,12 +113,12 @@ export default {
     lastPage() {
       this.toPicture -= 6;
       let swiper = setInterval(() => {
-          this.nowHeight-=15;
+          this.nowHeight--;
           if(this.nowHeight == this.toHeight) {
           clearInterval(swiper);
           this.pageFlag = true;
           }
-          this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'px)';
+          this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'vh)';
           
         }, 1);
     },
@@ -128,12 +128,12 @@ export default {
         this.toPicture = this.totalPicture - 6;
       }
       let swiper = setInterval(() => {
-          this.nowHeight+=15;
+          this.nowHeight++;
           if(this.nowHeight == this.toHeight) {
           clearInterval(swiper);
           this.pageFlag = true;
           }
-          this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'px)';
+          this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'vh)';
           
         }, 1);
     },
@@ -222,9 +222,10 @@ export default {
 }
 .picture-show img {
   position: absolute;
-  width: 500px;
-  height: 800px;
-  background-color: pink;
+  min-width: 450px;
+  width: 28vw;
+  height: 87vh;
+  /* background-color: pink; */
   z-index: 9;
 }
 .picture-show .shadow1 {
@@ -322,8 +323,8 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  width: 105px;
-  height: 875px;
+  width: 7vw;
+  height: 96vh;
   margin-right: 30px;
   margin-top: -10px;
   /* background-color: #fff; */
@@ -353,22 +354,24 @@ export default {
   border-top: 13px solid #ccc;
 }
 .hover-box {
-  width: 105px;
-  height: 805px;
+  width: 7vw;
+  height: 89vh;
   overflow: hidden;
 }
 .picture-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 105px;
+  width: 7vw;
+  min-width: 105px;
   /* transform: translateY(-135px); */
 }
 .picture-container li {
   position: relative;
-  width: 105px;
-  height: 130px;
-  margin-bottom: 5px;
+  width: 7vw;
+  min-width: 105px;
+  height: 14vh;
+  margin-bottom: 1vh;
   background-color: #fff;
 }
 .picture-container li:hover .hover-num {
@@ -380,9 +383,9 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  width: 105px;
-  height: 130px;
-  line-height: 128px;
+  width: 7vw;
+  height: 14vh;
+  line-height: 14vh;
   text-align: center;
   font-size: 60px;
   color: #000;

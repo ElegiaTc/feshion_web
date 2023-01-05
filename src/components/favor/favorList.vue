@@ -23,6 +23,7 @@
             top="35vh"
             center>
             <span class="content">确认要删除吗？</span>
+            <el-divider></el-divider>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="deleteOneFavor">确 定</el-button>
                 <el-button @click="dialogVisible = false">取 消</el-button>
