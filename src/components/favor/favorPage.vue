@@ -41,9 +41,17 @@ export default {
         this.$bus.$on('totalFavorPage',(pages) => {
             this.totalPage = pages
         });
-        this.$bus.$on('updateTotalPage',(pages) => {
+        this.$bus.$on('updateFolderTotalPage',(pages) => {
             this.totalPage = pages
         });
+        this.$bus.$on('updatePhotoTotalPage',(pages) => {
+            this.totalPage = pages
+        });
+    },
+    beforeDestroy() {
+        this.$bus.$off('totalFavorPage');
+        this.$bus.$off('updateFolderTotalPage');
+        this.$bus.$off('updatePhotoTotalPage');
     }
 }
 </script>

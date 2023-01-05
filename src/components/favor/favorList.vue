@@ -8,8 +8,8 @@
                 </div>
                 <p>{{f.name}}</p>
                 <div class="operate-box">
-                    <div class="download"><i class="el-icon-download"></i></div>
-                    <div class="delete" @click.stop="ifDelete(f.id)"><i class="el-icon-delete"></i></div>
+                    <div class="toSonFavor" @click="toSonFavor(f.id,f.name)"><i class="el-icon-right"></i></div>
+                    <div class="delete" @click.stop="ifDelete(f.id)"><i class="el-icon-folder-delete"></i></div>
                 </div>
             </li>
             <li class="add-more" v-show="!loading">
@@ -46,9 +46,10 @@ export default {
             isChecked: false,
             current:1,
             pageSize:7,
-            id:-1,
+            nowFolderId:-1,
             dialogVisible:false,
             deleteFolderId:-1,
+            isFolder:true,
         }
     },
     methods: {
@@ -61,12 +62,17 @@ export default {
                 current: this.current,
                 userId: this.userId,
                 pageSize: this.pageSize,
-                id:this.id
+                id:this.nowFolderId
             }).then(res => {
                 console.log(res);
-                this.favorList = res.data.folders.records;
                 this.loading = false;
-                this.$bus.$emit('updateTotalPage',res.data.folders.pages)
+                if(this.isFolder) {
+                    this.favorList = res.data.folders.records;
+                    this.$bus.$emit('updateFolderTotalPage',res.data.folders.pages)
+                } else {
+                    this.favorList = res.data.folderPhotos.records;
+                    this.$bus.$emit('updatePhotoTotalPage',res.data.folderPhotos.pages)
+                }
             })
         },
         ifDelete(id) {
@@ -81,6 +87,12 @@ export default {
                 this.current = 1;
                 this.turnPage();
             })
+        },
+        toSonFavor(id,name) {
+            this.nowFolderId = id;
+            this.loading = true;
+            this.turnPage();
+            this.$bus.$emit('nowFavor',{id,name})
         }
     },
     created() {
@@ -111,13 +123,25 @@ export default {
                 this.turnPage();
             }
         })
+        this.$bus.$on('changeTypeBefore',(bool) => {
+            this.isFolder = bool;
+            this.loading = true;
+            this.current = 1;
+            this.turnPage();
+        })
+        this.$bus.$on('jumpToFolder',(id) => {
+            this.nowFolderId = id;
+            this.loading = true;
+            this.current = 1;
+            this.turnPage();
+        })
     },
     mounted() {
         showFolderByPage({
             current: this.current,
             userId: this.userId,
             pageSize: this.pageSize,
-            id:this.id
+            id:this.nowFolderId
         }).then(res => {
             console.log(res);
             this.loading = false;
@@ -125,8 +149,25 @@ export default {
             this.$bus.$emit('totalFavorPage',res.data.folders.pages)
         })
     },
+    beforeDestroy() {
+        this.$bus.$off('addFavor');
+        this.$bus.$off('deleteFavor');
+        this.$bus.$off('turnLastPage');
+        this.$bus.$off('turnNextPage');
+        this.$bus.$off('turnAnyPage');
+        this.$bus.$off('changeTypeBefore');
+        this.$bus.$off('jumpToFolder');
+    },
     computed: {
         ...mapState(['userId'])
+    },
+    watch: {
+        loading(newVal,oldVal) {
+            if(!newVal) {
+                this.$bus.$emit('changeTypeAfter',newVal);
+                console.log(oldVal);
+            }
+        }
     }
 }
 </script>

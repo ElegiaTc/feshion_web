@@ -43,6 +43,8 @@ export default {
             if(this.isLogin) {
             // window.removeEventListener("scroll",this.throttleFun,true);
             this.$router.push('/favority');
+            } else {
+                this.$router.push('/login');
             }
         },
         clickToMessage() {
