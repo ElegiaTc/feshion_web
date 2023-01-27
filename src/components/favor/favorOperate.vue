@@ -68,6 +68,8 @@ export default {
             pathid:15
         }
     },
+    mounted() {
+    },
     methods: {
         addFavor() {
             if(this.folderName != '') {
@@ -102,10 +104,15 @@ export default {
         this.$bus.$on('changeTypeAfter',(bool) => {
             this.ifDis = bool;
         })
+        //接收list传来的值，打开新建文件夹页面
+        this.$bus.$on('addFolderFromList',(bool) => {
+            this.dialogVisible = bool;
+        })
     },
     beforeDestroy() {
         this.$bus.$off('nowFavor')
         this.$bus.$off('changeTypeAfter')
+        this.$bus.$off('addFolderFromList')
     },
     computed: {
         ...mapState(['userId'])

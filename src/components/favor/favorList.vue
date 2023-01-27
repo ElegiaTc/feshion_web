@@ -1,10 +1,9 @@
 <template>
     <div>
-        <ul class="favor-list" v-loading:body='loading'>
+        <ul class="favor-list" v-loading:body='loading' v-if="isFolder">
             <li class="list-show" @click="clickToChoose('001')"
             v-for="(f,index) in favorList" :key="index">
                 <div class="picture-show" >
-                    <img src="" alt="">
                 </div>
                 <p>{{f.name}}</p>
                 <div class="operate-box">
@@ -12,7 +11,23 @@
                     <div class="delete" @click.stop="ifDelete(f.id)"><i class="el-icon-folder-delete"></i></div>
                 </div>
             </li>
-            <li class="add-more" v-show="!loading">
+            <li class="add-more" v-show="!loading" @click="addPhotoOrFolder">
+                <i class="el-icon-circle-plus"></i>
+            </li>
+        </ul>
+        <ul class="photo-list" v-loading:body='loading' v-else>
+            <li class="list-show" @click="clickToChoose('001')"
+            v-for="(f,index) in favorList" :key="index">
+                <div class="picture-show" >
+                    <img :src="f.photoPath" alt="">
+                </div>
+                <p>{{f.photoName}}</p>
+                <div class="operate-box">
+                    <div class="toSonFavor" @click="toSonFavor(f.id,f.name)"><i class="el-icon-right"></i></div>
+                    <div class="delete" @click.stop="ifDelete(f.id)"><i class="el-icon-delete"></i></div>
+                </div>
+            </li>
+            <li class="add-more" v-show="!loading" @click="addPhotoOrFolder">
                 <i class="el-icon-circle-plus"></i>
             </li>
         </ul>
@@ -33,13 +48,13 @@
 </template>
 
 <script>
-import {showFolderByPage,deleteFolder} from '../../api'
+import {showFolderByPage,deleteFolder,deletePhotoFromFolder} from '../../api'
 import {mapState} from 'vuex' 
 export default {
     name: 'favorList',
     data() {
         return {
-            loading:true,
+            loading:true,  //加载标识符
             favorList:[],
             photoList:[],
             checkedList:[],
@@ -49,7 +64,7 @@ export default {
             nowFolderId:-1,
             dialogVisible:false,
             deleteFolderId:-1,
-            isFolder:true,
+            isFolder:true,   //判断是展示收藏夹还是图片
         }
     },
     methods: {
@@ -57,6 +72,7 @@ export default {
             this.checkedList.push(id);
             this.isChecked = !this.isChecked
         },
+        //翻页
         turnPage() {
             showFolderByPage({
                 current: this.current,
@@ -68,7 +84,7 @@ export default {
                 this.loading = false;
                 if(this.isFolder) {
                     this.favorList = res.data.folders.records;
-                    this.$bus.$emit('updateFolderTotalPage',res.data.folders.pages)
+                    this.$bus.$emit('updateFolderTotalPage',res.data.folders.pages) //更新总页数
                 } else {
                     this.favorList = res.data.folderPhotos.records;
                     this.$bus.$emit('updatePhotoTotalPage',res.data.folderPhotos.pages)
@@ -82,17 +98,31 @@ export default {
         deleteOneFavor() {
             this.dialogVisible = false;
             this.loading = true;
-            deleteFolder(this.deleteFolderId).then(res => {
+            if(this.isFolder) {
+                deleteFolder(this.deleteFolderId).then(res => {
                 console.log(res);
                 this.current = 1;
                 this.turnPage();
-            })
+                this.$bus.$emit('deletefavorChange',1);
+            })} else {
+                deletePhotoFromFolder(this.deleteFolderId).then(res => {
+                    console.log(res);
+                    this.current = 1;
+                    this.turnPage();
+                    this.$bus.$emit('deletefavorChange',1);
+                })
+            }
         },
         toSonFavor(id,name) {
             this.nowFolderId = id;
             this.loading = true;
             this.turnPage();
             this.$bus.$emit('nowFavor',{id,name})
+        },
+        addPhotoOrFolder() {
+            if(this.isFolder) {
+                this.$bus.$emit('addFolderFromList',true) //列表中添加
+            }
         }
     },
     created() {
@@ -100,6 +130,7 @@ export default {
             this.current = page;
             this.loading = true;
             this.turnPage();
+            this.$bus.$emit('addfavorChange',1);
         })
         this.$bus.$on('deleteFavor',(page) => {
             this.current = page;
@@ -173,12 +204,17 @@ export default {
 </script>
 
 <style scoped>
-.favor-list {
+.favor-list,
+.photo-list {
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
     width: 926px;
     height: 530px;
+}
+img {
+    width: 100%;
+    height: 100%;
 }
 .list-show,
 .add-more{
@@ -193,6 +229,9 @@ export default {
     box-shadow: 0 0 2px 1px #aaa;
     cursor: pointer;
 }
+.photo-list .list-show {
+    padding: 8px 20px 0px 20px;
+}
 .list-show:nth-child(4n),
 .add-more{
     margin-right: 0;
@@ -200,6 +239,7 @@ export default {
 .list-show .picture-show {
     width: 111px;
     height: 109px;
+    margin: auto;
     border: 1px solid #000;
 }
 .list-show p {
@@ -214,7 +254,7 @@ export default {
     justify-content: space-around;
     width: 111px;
     height: 30px;
-    margin-top: 10px;
+    margin: 10px auto;
     border: 1px solid #000;
     opacity: 0;
 }

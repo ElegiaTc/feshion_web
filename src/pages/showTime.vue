@@ -4,7 +4,7 @@
       <div class="main-top">
         <div class="main-title">
           <p>
-            S P I N G &nbsp;&nbsp;F E S T I V O L <br>
+            S P R I N G &nbsp;&nbsp;F E S T I V O L <br>
             2 0 1 8&nbsp;&nbsp; C R I S T M I S&nbsp;&nbsp; A N D<br>
             I D O N T K N O W <br>
             W A N T H A P E E N
@@ -19,9 +19,6 @@
         <div class="main-picture">
           <div class="picture-show">
             <img :src="picturePath" alt="">
-            <div class="shadow1"></div>
-            <div class="shadow2"></div>
-            <div class="shadow3"></div>
           </div>
           <div class="picture-operate">
             <div class="operate-left">
@@ -216,53 +213,24 @@ export default {
 }
 .show-main .picture-show {
   position: relative;
-  width: 350px;
-  height: 500px;
-  background-color: pink;
+  width: 28vw;
+  height: 83vh;
 }
 .picture-show img {
   position: absolute;
   min-width: 450px;
   width: 28vw;
-  height: 87vh;
+  height: 83vh;
   /* background-color: pink; */
   z-index: 9;
-}
-.picture-show .shadow1 {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 348px;
-  height: 498px;
-  border: 1px solid #fff;
-  background-color: #000;
-  z-index: 3;
-}
-.picture-show .shadow2 {
-  position: absolute;
-  top: 7px;
-  left: 7px;
-  width: 348px;
-  height: 498px;
-  border: 1px solid #fff;
-  background-color: #000;
-  z-index: 2;
-}
-.picture-show .shadow3 {
-  position: absolute;
-  top: 11px;
-  left: 11px;
-  width: 348px;
-  height: 498px;
-  border: 1px solid #fff;
-  z-index: 1;
 }
 .picture-operate {
   display: flex;
   justify-content: space-between;
-  width: 350px;
+  min-width: 450px;
+  width: 28vw;
   height: 70px;
-  margin-top: 25px;
+  margin-top: 5px;
   /* background-color: #fff; */
 }
 .operate-left .fado {
@@ -372,7 +340,6 @@ export default {
   min-width: 105px;
   height: 14vh;
   margin-bottom: 1vh;
-  background-color: #fff;
 }
 .picture-container li:hover .hover-num {
   opacity: 1;

@@ -9,7 +9,7 @@
                 <img :src="p.path" alt="">
                 <div class="hover-page" @click="turnToShow(p.photoId,p.id)">
                     <div class="operate-box">
-                        <div class="download"><i class="el-icon-download"></i></div>
+                        <div class="download" @click.stop="downloadImg(p.path)"><i class="el-icon-download"></i></div>
                         <div class="favor" @click.stop="addFavor(p.path,p.name)"><i class="el-icon-folder"></i></div>
                         <div class="search"><i class="el-icon-search"></i></div>
                     </div>
@@ -18,11 +18,30 @@
             <div class="picture-name">{{p.name}}</div>
         </li>
     </ul>
+    <el-dialog
+        :visible.sync="dialogVisible"
+        width="35%"
+        title='加入收藏夹'
+        :show-close='false'
+        top="25vh"
+        :close-on-click-modal='false'
+        @close='checkList=[];favorList=[];'
+        center>
+        <el-checkbox-group v-model="checkList">
+            <el-checkbox v-for="(f,index) in favorList" :key="index"
+            :label="f.id">{{f.name}}</el-checkbox>
+        </el-checkbox-group>
+        <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="photoTo">确 定</el-button>
+            <el-button @click="dialogVisible = false">取 消</el-button>
+        </span>
+    </el-dialog>
  </div>
 </template>
 
 <script>
-import {getShowList} from '../../api'
+import {getShowList,showFolderByPage,addPhotoToFolder} from '../../api'
+import {mapState} from 'vuex' 
 export default {
     name: 'showPlace',
     components: [
@@ -35,8 +54,15 @@ export default {
             current:1,
             pages:2,
             nowPhotoPath:'',
-            nowPhotoName:''
+            nowPhotoName:'',
+            dialogVisible:false,
+            favorList:[],
+            checkList:[],
+            nowFolderId:-1,
         }
+    },
+    computed: {
+        ...mapState(['userId'])
     },
     mounted(){
         getShowList({current:1,pageSize:6}).then(res=>{
@@ -53,6 +79,7 @@ export default {
         
     },
     methods: {
+        //点击去秀场
         turnToShow(photoId,showId) {
             window.removeEventListener("scroll",this.throttleFun,true);
             this.$router.push({
@@ -63,10 +90,52 @@ export default {
                 }
             })
         },
+        //点击收藏并展示收藏夹列表
         addFavor(path,name) {
-            this.nowPhotoPath = path;
-            this.nowPhotoName = name;
-            console.log(path,name);
+            if(this.userId!=-1) {
+                this.nowPhotoPath = path;
+                this.nowPhotoName = name;
+                console.log(path,name);
+                this.dialogVisible = true;
+                showFolderByPage({
+                    current: 1,
+                    userId: this.userId,
+                    pageSize: 1,
+                    id:this.nowFolderId
+                }).then(res => {
+                    console.log(res);
+                    showFolderByPage({
+                        current: 1,
+                        userId: this.userId,
+                        pageSize: res.data.folders.total,
+                        id:this.nowFolderId
+                    }).then(res => {
+                        console.log(res);
+                        this.favorList = res.data.folders.records;
+                    })
+                 })
+            } else {
+                this.$router.push('/login');
+            }
+        },
+        //添加图片到收藏夹
+        photoTo() {
+            this.checkList.forEach(e => {
+                addPhotoToFolder({
+                    folderId:e,
+                    photoName:this.nowPhotoName,
+                    photoPath:this.nowPhotoPath,
+                    description:'no',
+                    note:'no'
+                }).then(res => {
+                    console.log(res);
+                    this.dialogVisible = false;
+                    this.$message({
+                        message: '添加成功！',
+                        type: 'success'
+                    });
+                })
+            });
         },
         handleScroll() {
             //标准浏览器中：定义一个形参event，但当事件触发的时候，并没有给event赋实际的值，则浏览器会把”事件“的对象赋给这个形参e，这时这个e是个系统级的对象：事件；
@@ -107,7 +176,26 @@ export default {
         },
         throttleFun() {
             this.throttle(this.handleScroll(), 1000);
-        }
+        },
+        downloadImg(imgsrc) { //下载图片地址和图片名
+				var image = new Image();
+				// 解决跨域 Canvas 污染问题
+				image.setAttribute("crossOrigin", "anonymous");
+				image.onload = function() {
+					var canvas = document.createElement("canvas");
+					canvas.width = image.width;
+					canvas.height = image.height;
+					var context = canvas.getContext("2d");
+					context.drawImage(image, 0, 0, image.width, image.height);
+					var url = canvas.toDataURL("image/png"); //得到图片的base64编码数据
+					var a = document.createElement("a"); // 生成一个a元素
+					var event = new MouseEvent("click"); // 创建一个单击事件
+					a.download = "photo"; // 设置图片名称
+					a.href = url; // 将生成的URL设置为a.href属性
+					a.dispatchEvent(event); // 触发a的单击事件
+				};
+				image.src = imgsrc;
+			},
     }
 }
 </script>

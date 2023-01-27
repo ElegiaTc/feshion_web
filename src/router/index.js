@@ -1,7 +1,7 @@
 import VueRouter from "vue-router"
 import Login from '../pages/login'
 import Search from '../pages/search'
-import Show from '../pages/showTime'
+import ShowTime from '../pages/showTime'
 import Home from '../pages/home'
 import AILab from '../pages/AILab'
 import Favority from '../pages/favority'
@@ -12,6 +12,12 @@ import Browse from '../pages/browse'
 import Download from '../pages/download'
 import BaseMessage from '../pages/BaseMessage'
 import ModifyPassword from '../pages/ModifyPassword'
+import Model from '../pages/model'
+import Clothe from '../pages/clothe'
+import Makeup from '../pages/makeup'
+import Hair from '../pages/hair'
+import Posture from '../pages/posture'
+import Show from '../pages/show'
 
 let originPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function (location, resolve, reject) {
@@ -39,20 +45,45 @@ export default new VueRouter({
             component: Search
         },
         {
-            path: '/show',
+            path: '/showtime',
             name: 'showTime',
-            component: Show
+            component: ShowTime
         },
         {
             path: '/home',
             component: Home,
+        },
+        {
+            path: '/ailab',
+            component: AILab,
+        },
+        {
+            path: '/model',
+            component: Model,
             meta: {
                 keepAlive:true
             }
         },
         {
-            path: '/aiLab',
-            component: AILab
+            path: '/clothe',
+            component: Clothe
+        },
+        {
+            path: '/makeup',
+            component: Makeup
+        },
+        {
+            path: '/hair',
+            component: Hair
+        },
+        {
+            path: '/posture',
+            component: Posture
+        },
+        {
+            path: '/show',
+            name: 'show',
+            component: Show
         },
         {
             path: '/favority',

@@ -15,7 +15,11 @@ export default {
   name: 'App',
   components: {
     Header,
-    
+  },
+  created() {
+    if(this.$router.path !== '/home') {
+      this.$router.push('/home')
+    }
   }
 }
 </script>
@@ -41,5 +45,26 @@ a {
 
 li {
   list-style: none;
+}
+.btn-plain {
+  width: 130px;
+  height: 48px;
+  border-radius: 8px;
+  border: 1px solid rgb(66,42,42);
+  text-align: center;
+  line-height: 48px;
+  cursor: pointer;
+  user-select: none;
+}
+.btn-confirm {
+  width: 173px;
+  height: 60px;
+  background-color: rgb(76,75,103);
+  border-radius: 12px;
+  text-align: center;
+  line-height: 60px;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
 }
 </style>

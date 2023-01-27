@@ -101,3 +101,33 @@ export const queryShowList = (data) => {
         method: 'POST'
     })
 }
+//添加图片到文件夹
+export const addPhotoToFolder = (data) => {
+    return requests({
+        data,
+        url: '/folderPhoto/addPhotoToFolder',
+        method: 'POST'
+    })
+}
+//从文件夹中删除图片
+export const deletePhotoFromFolder = (id) => {
+    return requests({
+        url: '/folderPhoto/deletePhotoFromFolder/' + id,
+        method: 'GET'
+    })
+}
+//从文件夹中获得图片
+export const getPhotos = (id) => {
+    return requests({
+        url: '/folderPhoto/getPhotos/' + id,
+        method: 'POST'
+    })
+}
+//test
+export const getTest = (data) => {
+    return requests({
+        data,
+        url: '/else/api/v1/postTransfer',
+        method: 'POST'
+    })
+}

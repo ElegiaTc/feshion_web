@@ -47,11 +47,19 @@ export default {
         this.$bus.$on('updatePhotoTotalPage',(pages) => {
             this.totalPage = pages
         });
+        this.$bus.$on('addfavorChange',(pages) => {
+            this.nowPage = pages;
+        })
+        this.$bus.$on('deletefavorChange',(pages) => {
+            this.nowPage = pages;
+        })
     },
     beforeDestroy() {
         this.$bus.$off('totalFavorPage');
         this.$bus.$off('updateFolderTotalPage');
         this.$bus.$off('updatePhotoTotalPage');
+        this.$bus.$off('addfavorChange');
+        this.$bus.$off('deletefavorChange');
     }
 }
 </script>

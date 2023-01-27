@@ -1,8 +1,8 @@
 <template>
   <div class="home">
-    <Carousel></Carousel>
-    <Fashion></Fashion>
-    <Show></Show>
+    <Carousel/>
+    <Fashion/>
+    <Show/>
   </div> 
 </template>
 
@@ -20,6 +20,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

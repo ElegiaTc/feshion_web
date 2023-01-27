@@ -2,7 +2,7 @@
     <header>
         <div class="header">
             <router-link to="/home" style='margin-left:40px'>首 页</router-link>
-            <router-link to="/aiLab">A I L a b</router-link>
+            <div class="AIlab" @click="clickToAIlab">A I L a b</div>
             <span class="shiliu">
                 <b>S</b>
                 <b>H</b>
@@ -24,7 +24,8 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
+import axios from 'axios'
+import {mapState} from 'vuex'
 export default {
     name: 'myHeader',
     data() {
@@ -38,6 +39,18 @@ export default {
     methods:{
         clickToShow() {
             this.userShow = !this.userShow;
+        },
+        clickToAIlab() {
+            // axios.get('http://159.75.217.15:8891/api/v1/poseTransfer')
+            // .then(res => {
+            //     console.log(res);
+            // })
+            if(this.isLogin) {
+            // window.removeEventListener("scroll",this.throttleFun,true);
+                this.$router.push('/ailab');
+            } else {
+                this.$router.push('/login');
+            }
         },
         clickToFavor() {
             if(this.isLogin) {
@@ -61,6 +74,10 @@ export default {
             this.$store.commit('CHANGE_LOGIN')
             this.userShow = !this.userShow;
             this.$router.push('/home');
+            this.$message({
+                  message: '登出成功',
+                  type: 'success'
+                });
         }
     }
 }
@@ -112,7 +129,8 @@ header {
 .header a:hover {
     color: rgb(153,153,153);
 }
-.header .favority {
+.header .favority,
+.header .AIlab {
     font-size: 14px;
     color: #fff;
     cursor: pointer;
@@ -124,6 +142,7 @@ header {
     color: #fff;
     cursor: pointer;
 }
+.header .AIlab:hover,
 .header .favority:hover,
 .header .user-lab:hover,
 .header .to-login:hover {

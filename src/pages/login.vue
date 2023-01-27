@@ -57,8 +57,16 @@ export default {
                 [res.data.nickname,res.data.username,res.data.id])
                 this.$router.push('/home');
               })
+              this.$message({
+                  message: '登陆成功！',
+                  type: 'success'
+                });
             } else {
                 console.log(res);
+                this.$message({
+                  message: res.message,
+                  type: 'warning'
+                });
               }
           })
         } else {                  //走注册流程
@@ -70,8 +78,16 @@ export default {
                 this.btnMsg = '登 录'
                 this.isLoginPage = true
                 this.tipsMsg = '无 账 号？点 击 注 册'
+                this.$message({
+                  message: res.data,
+                  type: 'success'
+                });
               } else {
                 console.log(res);
+                this.$message({
+                  message: res.message,
+                  type: 'warning'
+                });
               }
             })
           }

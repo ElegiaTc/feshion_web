@@ -11,12 +11,12 @@ import Operate from '../components/favor/favorOperate'
 import List from '../components/favor/favorList'
 import Page from '../components/favor/favorPage'
 export default {
-    name: 'myFavority',
-    components: {
-        Operate,
-        List,
-        Page
-    },
+  name: 'myFavority',
+  components: {
+    Operate,
+    List,
+    Page
+  }
 }
 </script>
 

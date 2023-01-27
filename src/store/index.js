@@ -14,6 +14,10 @@ const mutations = {
         state.nickname = nickname;
         state.username = username;
         state.userId = userId;
+    },
+    ADD_MODELFILE(state,modelArr) {
+        state.modelFile.length = 0
+        state.modelFile[0] = modelArr
     }
 }
 
@@ -22,6 +26,7 @@ const state = {
     nickname:'',
     username:'',
     userId:-1,
+    modelFile: [],
 }
 
 export default new Vuex.Store({

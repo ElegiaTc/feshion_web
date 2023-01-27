@@ -15,7 +15,7 @@
           <div class="pic-sort">分类: 123</div>
           <div class="pic-size">大小: 123</div>
         </div>
-        <div class="see-more">查看详情</div>
+        <div class="see-more" @click="toShow(r.id,r.photoId)">查看详情</div>
       </li>
     </ul>
     <div class="is-empty" v-show="isEmpty">浏览记录为空！</div>
@@ -45,6 +45,17 @@ export default {
           this.isEmpty = true
         }
       })
+    },
+    methods: {
+      toShow(showId,photoId) {
+          this.$router.push({
+            name: 'showTime',
+            query: {
+            photoId,
+            showId
+            }
+          })
+      }
     }
 }
 </script>

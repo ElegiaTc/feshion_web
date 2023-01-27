@@ -28,7 +28,7 @@
       </select>
       <input type="text" placeholder="输入查找内容"
       v-model.trim="searchKeyWord" @keyup.enter="searchPage">
-      <div class="searchBtn" @click="searchPage">搜</div>
+      <div class="searchBtn" @click="searchPage"><i class="el-icon-search"></i></div>
     </div>
   </div>
 </template>
@@ -141,6 +141,9 @@ import 'swiper/css/swiper.min.css'
   background-color: rgba(255,255,255,0.8);
 }
 .search-modules .searchBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 60px;
   height: 29px;
   border-radius: 0 10px 10px 0;
@@ -149,6 +152,6 @@ import 'swiper/css/swiper.min.css'
   cursor: pointer;
 }
 .search-modules .searchBtn:hover {
-  opacity: 0.1;
+  opacity: 0.5;
 }
 </style>
