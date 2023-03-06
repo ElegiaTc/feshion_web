@@ -113,6 +113,7 @@ export default {
         if(this.baseURL !== '') {
           let url = '/'+sessionStorage.getItem('AILabType');
           console.log(url);
+          sessionStorage.setItem('modelUrl',this.baseURL)
           this.$router.push(url)
         }
         else {

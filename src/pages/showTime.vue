@@ -9,11 +9,10 @@
             I D O N T K N O W <br>
             W A N T H A P E E N
           </p>
-          <p>2 0 1 8 迪 奥 冬 季 秀 场</p>
+          <p>{{showName}}</p>
           <div class="labels">
             <p>标签：<br>
-            高级 成衣 Chanel <br>
-            时装周 巴黎细节</p>
+            {{introduction}}</p>
           </div>
         </div>
         <div class="main-picture">
@@ -29,8 +28,8 @@
               <div class="search">点击搜索相似图</div>
             </div>
             <div class="operate-right">
-              <div class="last-one">左</div>
-              <div class="next-one">右</div>
+              <div class="last-one" @click="lastPicture"><i class="el-icon-arrow-left"></i></div>
+              <div class="next-one" @click="nextPicture"><i class="el-icon-arrow-right"></i></div>
             </div>
           </div>
         </div>
@@ -64,60 +63,75 @@ export default {
   name: 'showTime',
   data() {
     return {
-      pictureList:[],
-      picturePath:'',
-      pictureHeight:15,
-      pageHeight:89,
-      nowHeight:0,
-      toPicture:0,
-      totalPicture:0,
-      pictureFlag:true,
-      pageFlag:true
+      pictureList:[],           //所有图片列表
+      introduction: '',         //存放标签的数组
+      showName: '',             //秀场名字
+      picturePath:'',           //当前显示图片路径
+      pictureHeight:15,         //每张图片的高度（vh）
+      pageHeight:89,            //每一页（六张）的高度
+      nowHeight:0,              //当前高度
+      toPicture:0,              //需要到达哪张图片
+      totalPicture:0,           //图片总数
+      pictureFlag:true,         //是否在滑动图片的标志
+      pageFlag:true             //是否可以翻页标志
     }
   },
   methods: {
     changePicture(id,path) {
-      if(this.pictureFlag) {
-      this.pictureFlag = false;
-      this.toPicture = id;
-      this.picturePath = path;
-      console.log(id);
-      if(this.totalPicture - id < 6) {
-        this.toPicture = this.totalPicture-6
-      }
+        this.pictureFlag = false;
+        this.toPicture = id;
+        this.picturePath = path;
+        
+        if(this.totalPicture - id < 6 && this.pictureFlag) {
+          this.toPicture = this.totalPicture-6
+        }
         let step = 1;
         let count = 8;
-        // this.$refs.showImg.style.transform = 'translateY('+'-'+ this.toHeight + 'px)';
         if(this.toHeight - this.nowHeight > 45) {count=1;}
         else if(this.toHeight - this.nowHeight > 30) {count=2}
         else if(this.toHeight - this.nowHeight > 15) {count=4}
         else if(this.toHeight - this.nowHeight > 0) {}
-        else if(this.toHeight - this.nowHeight == 0) step=0;
+        else if(this.toHeight - this.nowHeight == 0) {step=0;}
         else if(this.toHeight - this.nowHeight >= -15) {count=4;step=-1}
         else if(this.toHeight - this.nowHeight >= -30) {count=2;step=-1}
         else if(this.toHeight - this.nowHeight >= -45) {count=1;step=-1}
         let swiper = setInterval(() => {
           this.nowHeight+=step;
           if(this.nowHeight == this.toHeight) {
-          clearInterval(swiper);
-          this.pictureFlag = true;
+            clearInterval(swiper);
+            this.pictureFlag = true;
           }
           this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'vh)';
-          
         }, count);
-      }
     },
     lastPage() {
       this.toPicture -= 6;
+      if(this.toPicture < 0) this.toPicture = 0
+      console.log(this.toPicture);
       let swiper = setInterval(() => {
-          this.nowHeight--;
           if(this.nowHeight == this.toHeight) {
-          clearInterval(swiper);
-          this.pageFlag = true;
+            clearInterval(swiper);
+            this.pageFlag = true;
           }
+          else this.nowHeight--;
           this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'vh)';
-          
         }, 1);
+      console.log(this.toHeight);
+    },
+    lastPicture() {
+      if(this.toPicture) {
+        this.toPicture -= 1
+        console.log(this.toPicture);
+        this.picturePath = this.pictureList[this.toPicture].path
+        let swiper = setInterval(() => {
+          this.nowHeight--
+          if(this.nowHeight == this.toHeight) {
+            clearInterval(swiper)
+            this.pageFlag = true
+          }
+          this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'vh)'
+        }, 1);
+      }
     },
     nextPage() {
       this.toPicture += 6;
@@ -134,6 +148,21 @@ export default {
           
         }, 1);
     },
+    nextPicture() {
+      if(this.toPicture !== this.totalPicture - 1) {
+        this.toPicture += 1
+        console.log(this.toPicture);
+        this.picturePath = this.pictureList[this.toPicture].path
+        let swiper = setInterval(() => {
+          if(this.nowHeight == this.toHeight) {
+            clearInterval(swiper)
+            this.pageFlag = true
+          }
+          else this.nowHeight++
+          this.$refs.showImg.style.transform = 'translateY('+'-'+ this.nowHeight + 'vh)'
+        }, 1);
+      }
+    },
   },
   computed: {
     toHeight() {
@@ -145,10 +174,12 @@ export default {
   mounted() {
     getShowDetail(this.$route.query.photoId,this.$route.query.showId)
     .then(res => {
-      console.log(res);
-      this.pictureList = res.data.photoShowVos;
-      this.picturePath = this.pictureList[0].path;
-      this.totalPicture = res.data.photoShowVos.length;
+      console.log(res.data)
+      this.pictureList = Object.freeze(res.data.photoShowVos)
+      this.picturePath = this.pictureList[0].path
+      this.totalPicture = res.data.photoShowVos.length
+      this.showName = res.data.name
+      this.introduction = eval('(' + res.data.introduction + ')').join(' ')
     })
     .catch(err => {
       console.log(err);
@@ -183,13 +214,13 @@ export default {
 }
 .main-top .main-title {
   padding-top: 20px;
-  width: 215px;
-  height: 300px;
-  margin: 80px 30px 0;
+  width: 235px;
+  height: 320px;
+  margin: 80px 30px 0 100px;
   background-color: #222;
 }
 .main-title p {
-  width: 220px;
+  width: 235px;
   text-align: center;
   color: #fff;
   font-size: 14px;
@@ -207,20 +238,20 @@ export default {
   top: -30px;
   left: 40px;
   content: '';
-  width: 140px;
+  width: 155px;
   height: 1px;
   background-color: #444;
 }
 .show-main .picture-show {
   position: relative;
   width: 28vw;
-  height: 83vh;
+  height: 81vh;
 }
 .picture-show img {
   position: absolute;
   min-width: 450px;
   width: 28vw;
-  height: 83vh;
+  height: 81vh;
   /* background-color: pink; */
   z-index: 9;
 }
@@ -265,8 +296,11 @@ export default {
 .operate-right div {
   width: 38px;
   height: 48px;
+  text-align: center;
+  line-height: 47px;
   border: 1px solid #333;
   border-radius: 5px;
+  font-size: 28px;
   background-color: #111;
   color: #fff;
   cursor: pointer;

@@ -23,7 +23,7 @@
                 </div>
                 <p>{{f.photoName}}</p>
                 <div class="operate-box">
-                    <div class="toSonFavor" @click="toSonFavor(f.id,f.name)"><i class="el-icon-right"></i></div>
+                    <div class="toSonFavor" @click="toSonFavor(f.id,f.name)"><i class="el-icon-download"></i></div>
                     <div class="delete" @click.stop="ifDelete(f.id)"><i class="el-icon-delete"></i></div>
                 </div>
             </li>

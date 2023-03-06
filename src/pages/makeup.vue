@@ -16,7 +16,7 @@
         <h4>妆容编辑</h4>
         <p>上传您想要的妆容图片，<br>我们将在模特上生成结果。</p>
         <div class="picutre">
-            <img src="" alt="">
+            <img :src="modelUrl" alt="">
         </div>
     </div>
   </div>
@@ -27,9 +27,12 @@ export default {
     name: 'makeup',
     data() {
         return {
-            
+            modelUrl: ''
         }
-    }
+    },
+    created() {
+        this.modelUrl = sessionStorage.getItem('modelUrl')
+    },
 }
 </script>
 

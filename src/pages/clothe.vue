@@ -5,7 +5,7 @@
                 <img src="../assets/clothe-logo.png" alt="">
             </div>
             <div class="upload-image">
-                <img src="" alt="">
+                <img :src="modelUrl" alt="">
             </div>
         </div>
         <div class="right">
@@ -46,9 +46,12 @@ export default {
     name: 'clothe',
     data() {
         return {
-            
+            modelUrl: ''
         }
-    }
+    },
+    created() {
+        this.modelUrl = sessionStorage.getItem('modelUrl')
+    },
 }
 </script>
 

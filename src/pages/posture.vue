@@ -6,7 +6,7 @@
             <img src="../assets/pose-logo.png" alt="">
         </div>
         <div class="upload-image">
-            <img src="" alt="">
+            <img :src="modelUrl" alt="">
         </div>
     </div>
     <div class="right">
@@ -34,6 +34,7 @@ export default {
     data() {
         return {
             loading: false,
+            modelUrl: '',
             baseURL:'',
             fileArr: []
         }
@@ -66,7 +67,7 @@ export default {
                 let formdata = new FormData()
                 formdata.append('source_img',this.fileArr[0])
                 formdata.append('target_img',this.fileArr[1])
-                axios.post('http://159.75.217.15:8891/api/v1/poseTransfer',formdata)
+                axios.post('http://42.192.160.69:8891/api/v1/poseTransfer',formdata)
                 .then(res => {
                     this.loading = false;
                     console.log(res);
@@ -85,6 +86,13 @@ export default {
                     this.$message({
                         message: '生成成功！',
                         type: 'success'
+                    });
+                })
+                .catch(() => {
+                    this.loading = false;
+                    this.$message({
+                        message: '生成失败！',
+                        type: 'error'
                     });
                 })
             } else {
@@ -122,7 +130,10 @@ export default {
     },
     computed: {
         ...mapState(['modelFile'])
-    }
+    },
+    created() {
+        this.modelUrl = sessionStorage.getItem('modelUrl')
+    },
 }
 </script>
 
